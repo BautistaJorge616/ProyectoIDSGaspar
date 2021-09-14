@@ -42,26 +42,24 @@
                 header("Location:registrarUsuario.php");
                 echo"<script language='javascript'>window.location='registrarUsuario.php'</script>;";
                 exit();
-                echo "Admin";
                 
             }else{
                 
                 //Validamos que el password no sea el predeterminado
                 if($password  == "000"){
                     //Y lo redireccionamos
-                   //header("Status: 301 Moved Permanently");
-                   //header("Location:cambioPassword.php");
-                   //echo"<script language='javascript'>window.location='cambioPassword.php'</script>;";
-                   //exit();
+                   header("Status: 301 Moved Permanently");
+                   header("Location:cambioPassword.php");
+                   echo"<script language='javascript'>window.location='cambioPassword.php'</script>;";
+                   exit();
                 }else{
 
                     //Si ya tiene contraseña (No predeterminada)
                     //Y lo redireccionamos
-                    //header("Status: 301 Moved Permanently");
-                    //header("Location:espacioTrabajo.php");
-                    //echo"<script language='javascript'>window.location='espacioTrabajo'</script>;";
-                    //exit();
-                    echo "Usuario con contraseña establecida";
+                    header("Status: 301 Moved Permanently");
+                    header("Location:espacioTrabajo.php");
+                    echo"<script language='javascript'>window.location='espacioTrabajo'</script>;";
+                    exit();
                 }
             }
 
