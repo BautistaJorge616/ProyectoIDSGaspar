@@ -38,10 +38,10 @@
             //Validamos si es el administrador
             if($rolConsultado == 0){
                 //Y lo redireccionamos
-                //header("Status: 301 Moved Permanently");
-                //header("Location:registrarUsuario.php");
-                //echo"<script language='javascript'>window.location='registrarUsuario.php'</script>;";
-                //exit();
+                header("Status: 301 Moved Permanently");
+                header("Location:registrarUsuario.php");
+                echo"<script language='javascript'>window.location='registrarUsuario.php'</script>;";
+                exit();
                 echo "Admin";
                 
             }else{
