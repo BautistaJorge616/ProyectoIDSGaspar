@@ -11,7 +11,64 @@
 
     if(!empty($_POST['correo']) && !empty($_POST['password']) ){
 
-        echo "Validado";
+        //Variables
+        $correo = $_POST['correo'];
+        $password = $_POST['password'];
+        //Validar credenciales
+
+        //Crear una consulta de los datos
+        $consulta = $conn->prepare('SELECT id_usuario,correo,password,rol FROM usuario WHERE correo=:correo');
+        //Hacer la consulta con los datos que recibi
+        $consulta->bindParam(':correo',$correo);
+        //Ejecutamos la consulta 
+        $consulta->execute();
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+        
+        if(!empty($resultado) && count($resultado) > 0 && password_verify($password, $resultado['password']) ){
+            //Guardar el id del usario
+            $correoConsultado = $resultado['correo'];
+            $rolConsultado = $resultado['rol'];
+            //Guardar el id del usario
+            $_SESSION['user_id'] = $resultado['id_usuario'];
+
+            //echo "$correoConsultado</br>";
+            //echo "$passwordConsultado</br>";
+            //echo "$rolConsultado</br>";
+
+            //Validamos si es el administrador
+            if($rolConsultado == 0){
+                //Y lo redireccionamos
+                //header("Status: 301 Moved Permanently");
+                //header("Location:registrarUsuario.php");
+                //echo"<script language='javascript'>window.location='registrarUsuario.php'</script>;";
+                //exit();
+                echo "Admin";
+                
+            }else{
+                
+                //Validamos que el password no sea el predeterminado
+                if($password  == "000"){
+                    //Y lo redireccionamos
+                   //header("Status: 301 Moved Permanently");
+                   //header("Location:cambioPassword.php");
+                   //echo"<script language='javascript'>window.location='cambioPassword.php'</script>;";
+                   //exit();
+                }else{
+
+                    //Si ya tiene contraseña (No predeterminada)
+                    //Y lo redireccionamos
+                    //header("Status: 301 Moved Permanently");
+                    //header("Location:espacioTrabajo.php");
+                    //echo"<script language='javascript'>window.location='espacioTrabajo'</script>;";
+                    //exit();
+                    echo "Usuario con contraseña establecida";
+                }
+            }
+
+            
+        }else{
+            $validacion = 1;
+        }
 
     }
 
