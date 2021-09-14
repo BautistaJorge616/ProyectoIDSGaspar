@@ -81,6 +81,21 @@
         </div>
     </div>
 
+    <!--Barra de navegación-->
+    <div class="container-fluid bg-light text-dark">
+        <div class="row justify-content-end">
+            <div class="col-3">
+                <div class="container-fluid text-white">
+                    <div class="row justify-content-end ">
+                        <div class="col-8">
+                            <a style="text-decoration:none" href="cerrarSesion.php">Cerrar Sesión</a>            
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </div>
+    </div>
+
      <!--Validación de errores al registrar un nuevo usuario-->
     <?php if ($validacion == 1){ ?>
 
