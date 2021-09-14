@@ -10,7 +10,7 @@
 	//Intentar conectarnos 
 	try {
 	 	$conn = new PDO("mysql:host=$server;port=3307;dbname=$database;",$username,$password);
-	 	echo "ONLINE</br>";
+	 	//echo "ONLINE</br>";
 	 } catch (PDOException $e) {
 	 	die('Connected failed: '.$e->getMessage());
 	 } 
