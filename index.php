@@ -111,11 +111,21 @@
 
     <?php } ?>
 
-    <!--Fomulario para iniciar sesión-->
+
+    <!--Slogan-->
     <div class="container-fluid my-5">
         <div class="row justify-content-center">
+            <div class="col-9">
+                <h1 class="display-1">Todo en un mismo lugar :)</h1>
+            </div>
+        </div>
+    </div>
+
+    <!--Fomulario para iniciar sesión-->
+    <div class="container-fluid my-3">
+        <div class="row justify-content-center">
             <div class="col-6">
-                <div class="container-md my-5">
+                <div class="container-md my-1">
 
                     <div class="card text-dark bg-light">
                         <div class="card-header">
