@@ -10,13 +10,6 @@
     $nivelDelUsuario;
     $id = $_SESSION['user_id'];
 
-    //Mostrar todos los documentos
-    $path = 'archivos/'.$id;
-
-    if(file_exists($path)){
-        $directorio = opendir($path);
-    }
-
     //Personalizar la página
     if(isset($_SESSION['user_id'])){
 
@@ -32,6 +25,15 @@
         $nivelDelUsuario = $resultado['rol'];
     }
 
+    //Mostrar todos los documentos
+
+    $path = 'archivos/usuarios/'.$id;
+  
+    if(!file_exists($path)){
+         mkdir($path);
+    }
+    
+    $directorio = opendir($path);
  
 ?>
 

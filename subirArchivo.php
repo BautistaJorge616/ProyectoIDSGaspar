@@ -41,7 +41,7 @@
             if($_FILES['archivo']['size'] <= $limite_mb * 1048576){
     
                 //Ruta donde se va a guardar
-                $ruta ='archivos/'.$n_sesion.'/';
+                $ruta ='archivos/usuarios/'.$n_sesion.'/';
                 $nombre_archivo = $_FILES['archivo']['name'];
     
                 $ruta_archivo = $ruta.$nombre_archivo;
