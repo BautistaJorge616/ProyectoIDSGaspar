@@ -8,6 +8,14 @@
 
     $nombreDelUsuario = "";
     $nivelDelUsuario;
+    $id = $_SESSION['user_id'];
+
+    //Mostrar todos los documentos
+    $path = 'archivos/'.$id;
+
+    if(file_exists($path)){
+        $directorio = opendir($path);
+    }
 
     //Personalizar la página
     if(isset($_SESSION['user_id'])){
@@ -89,11 +97,58 @@
     </div>
 
     <!--Archivos-->
-    <div class="container-fluid bg-light">
+    <div class="container-fluid">
     	<div class="row justify-content-center">
-    		<div class="col-4">
+    		<div class="col-10">
 
-    			<h1>Tabla de archivos</h1>
+    			<table class="table table-bordered table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Nombre del archivo</th>
+                            <th>Tipo de archivo</th>
+                            <th>Propietario del archivo</th>
+                            <th>Visualizar</th>
+                            <th>Analizar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        
+                        <?php while($archivo = readdir($directorio)){   ?>
+                            <tr>
+                                <?php if(!is_dir($archivo)){ ?>
+                                    <td> <?= $archivo ?> </td>
+                                    <td> <?= pathinfo($directorio.$archivo,PATHINFO_EXTENSION); ?> </td>
+                                    <td>Propietario</td>
+                                    <td>
+                                        <form action="#" method="POST">
+                                            <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
+                                            <input type="submit" name="ver" value="Visualizar">
+                                        </form>
+                                    </td>
+
+                                     <td>
+                                        <form action="#" method="POST">
+                                            <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
+                                            <input type="submit" name="analizar" value="Analizar">
+                                        </form>
+                                    </td>
+
+                                     <td> 
+                                        <form action="#" method="POST">
+                                            <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
+                                            <input type="submit" name="eliminar" value="Eliminar">
+                                        </form>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                        <?php } ?>                           
+
+                    </tbody>
+
+                </table>
 
     		</div>
     	</div>
