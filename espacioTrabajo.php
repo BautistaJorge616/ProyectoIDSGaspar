@@ -93,9 +93,6 @@
 
             </div>
         </div>
-        <div class="row justify-content-center">
-
-        </div>
     </div>
 
     <!--Archivos-->
@@ -112,7 +109,7 @@
                             <th>Propietario del archivo</th>
                             <th>Visualizar</th>
                             <th>Analizar</th>
-                            <th>Eliminar</th>
+                            
                         </tr>
                     </thead>
 
@@ -124,26 +121,46 @@
                                     <td> <?= $archivo ?> </td>
                                     <td> <?= pathinfo($directorio.$archivo,PATHINFO_EXTENSION); ?> </td>
                                     <td>Propietario</td>
+
+                                <!--Ver si se puede visualizar-->
+                                <?php $tipo = pathinfo($directorio.$archivo,PATHINFO_EXTENSION);?>
+                                <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
                                     <td>
                                         <form action="#" method="POST">
                                             <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                            <input type="submit" name="ver" value="Visualizar">
+                                            <div align="center">
+                                                <input type="submit" name="ver" value="Visualizar" class="btn btn-outline-primary btn-sm">
+                                            </div>
                                         </form>
                                     </td>
+                                <?php }else{?>
+                                    <td>
+                                        <div class="text-danger" align="center">
+                                            No soportado
+                                        </div>
+                                    </td>
+                                <?php } ?>
 
-                                     <td>
-                                        <form action="#" method="POST">
+                                <!--Ver si se puede analizar-->
+                                <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
+                                    <td>
+                                        <form action="analisis.php" method="POST" target="_blank">
                                             <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                            <input type="submit" name="analizar" value="Analizar">
+                                            <input type="hidden" name="propietario" value="<?php echo "Propietario"; ?>">
+                                            <div align="center" >
+                                                <input type="submit" name="analizar" value="Analizar"  class="btn btn-outline-primary btn-sm">
+                                            </div>
                                         </form>
                                     </td>
+                                <?php }else{?>
+                                    <td>
+                                        <div class="text-danger" align="center">
+                                            No soportado
+                                        </div>
+                                    </td>
+                                <?php } ?>
 
-                                     <td> 
-                                        <form action="#" method="POST">
-                                            <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                            <input type="submit" name="eliminar" value="Eliminar">
-                                        </form>
-                                    </td>
+                                     
                                 <?php } ?>
                             </tr>
                         <?php } ?>                           
