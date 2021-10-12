@@ -126,7 +126,7 @@
                                 <?php $tipo = pathinfo($directorio.$archivo,PATHINFO_EXTENSION);?>
                                 <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
                                     <td>
-                                        <form action="#" method="POST">
+                                        <form action="visualizar.php" method="POST" target="_blank">
                                             <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
                                             <div align="center">
                                                 <input type="submit" name="ver" value="Visualizar" class="btn btn-outline-primary btn-sm">
