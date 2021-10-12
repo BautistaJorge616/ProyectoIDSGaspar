@@ -108,9 +108,9 @@
                             <th>Extensión</th>
                             <th>Tamaño</th>
                             <th>Propietario</th>
-                            <th>Visualizar</th>
-                            <th>Analizar</th>
                             <th>Descargar</th>
+                            <th>Analizar</th>
+                            <th>Visualizar</th>
                             
                         </tr>
                     </thead>
