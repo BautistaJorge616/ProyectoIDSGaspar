@@ -105,10 +105,12 @@
                     <thead>
                         <tr>
                             <th>Nombre del archivo</th>
-                            <th>Tipo de archivo</th>
-                            <th>Propietario del archivo</th>
+                            <th>Extensión</th>
+                            <th>Tamaño</th>
+                            <th>Propietario</th>
                             <th>Visualizar</th>
                             <th>Analizar</th>
+                            <th>Descargar</th>
                             
                         </tr>
                     </thead>
@@ -118,50 +120,92 @@
                         <?php while($archivo = readdir($directorio)){   ?>
                             <tr>
                                 <?php if(!is_dir($archivo)){ ?>
-                                    <td> <?= $archivo ?> </td>
+                                    <td>
+                                        <?php $mostrar = explode(".", $archivo)[0];?>
+                                        <?php echo $mostrar; ?> 
+                                    </td>
                                     <td> <?= pathinfo($directorio.$archivo,PATHINFO_EXTENSION); ?> </td>
-                                    <td>Propietario</td>
 
-                                <!--Ver si se puede visualizar-->
-                                <?php $tipo = pathinfo($directorio.$archivo,PATHINFO_EXTENSION);?>
-                                <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
                                     <td>
-                                        <form action="visualizar.php" method="POST" target="_blank">
-                                            <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                            <div align="center">
-                                                <input type="submit" name="ver" value="Visualizar" class="btn btn-outline-primary btn-sm">
-                                            </div>
-                                        </form>
-                                    </td>
-                                <?php }else{?>
-                                    <td>
-                                        <div class="text-danger" align="center">
-                                            No soportado
-                                        </div>
-                                    </td>
-                                <?php } ?>
 
-                                <!--Ver si se puede analizar-->
-                                <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
+                                        <?php $tamano = filesize($path.'/'.$archivo); ?>
+                                        <?php if($tamano < 1048576){?>
+                                        <?php   $tamano = $tamano / 1024;?>
+                                        <?php   $tamano = round($tamano, PHP_ROUND_HALF_UP); ?>
+                                        <?php       if($tamano < 1){ ?>
+                                        <?php           echo "1 KB";?>
+                                        <?php       } else { ?>
+                                        <?php           echo $tamano." KB";?>
+                                        <?php       }?>
+                                        <?php } else { ?>
+                                        <?php   $tamano = $tamano / 1048576;?>
+                                        <?php   $tamano = round($tamano, PHP_ROUND_HALF_UP); ?>
+                                        <?php   echo $tamano." MB";?>
+                                        <?php } ?>
+
+                                    </td>
+
                                     <td>
-                                        <form action="analisis.php" method="POST" target="_blank">
+                                        Propietario
+                                    </td>
+
+
+                                    <!--Descargar-->
+                                    <td>
+                                        <form action="descargar.php" method="POST" 
+                                        target="_blank">
                                             <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                            <input type="hidden" name="propietario" value="<?php echo "Propietario"; ?>">
                                             <div align="center" >
-                                                <input type="submit" name="analizar" value="Analizar"  class="btn btn-outline-primary btn-sm">
+                                                <input type="submit" name="descargar" 
+                                                value="Descargar"  
+                                                class="btn btn-outline-primary btn-sm">
                                             </div>
                                         </form>
                                     </td>
-                                <?php }else{?>
-                                    <td>
-                                        <div class="text-danger" align="center">
-                                            No soportado
-                                        </div>
-                                    </td>
+
+                                    
+                                    <!--Ver si se puede visualizar-->
+                                    <?php $tipo = pathinfo($directorio.$archivo,PATHINFO_EXTENSION);?>
+                                    <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
+                                        <td>
+                                            <form action="visualizar.php" method="POST" target="_blank">
+                                                <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
+                                                <div align="center">
+                                                    <input type="submit" name="ver" value="Visualizar" class="btn btn-outline-primary btn-sm">
+                                                </div>
+                                            </form>
+                                        </td>
+                                    <?php }else{?>
+                                        <td>
+                                            <div class="text-danger" align="center">
+                                                No soportado
+                                            </div>
+                                        </td>
+                                    <?php } ?>
+
+                                    <!--Ver si se puede analizar-->
+                                    <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
+                                        <td>
+                                            <form action="analisis.php" method="POST" target="_blank">
+                                                <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
+                                                <input type="hidden" name="propietario" value="<?php echo "Propietario"; ?>">
+                                                <div align="center" >
+                                                    <input type="submit" name="analizar" value="Analizar"  class="btn btn-outline-primary btn-sm">
+                                                </div>
+                                            </form>
+                                        </td>
+                                    <?php }else{?>
+                                        <td>
+                                            <div class="text-danger" align="center">
+                                                No soportado
+                                            </div>
+                                        </td>
+                                    <?php } ?>
+
+
                                 <?php } ?>
 
-                                     
-                                <?php } ?>
+
                             </tr>
                         <?php } ?>                           
 
