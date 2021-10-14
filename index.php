@@ -17,14 +17,14 @@
         //Validar credenciales
 
         //Crear una consulta de los datos
-        $consulta = $conn->prepare('SELECT id_usuario,correo,password,rol FROM usuario WHERE correo=:correo');
+        $consulta = $conn->prepare('SELECT id_usuario,correo,password,rol,activo FROM usuario WHERE correo=:correo');
         //Hacer la consulta con los datos que recibi
         $consulta->bindParam(':correo',$correo);
         //Ejecutamos la consulta 
         $consulta->execute();
         $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
         
-        if(!empty($resultado) && count($resultado) > 0 && password_verify($password, $resultado['password']) ){
+        if(!empty($resultado) && count($resultado) > 0 && password_verify($password, $resultado['password']) && $resultado['activo'] == 1){
             //Guardar el id del usario
             $correoConsultado = $resultado['correo'];
             $rolConsultado = $resultado['rol'];
@@ -39,8 +39,8 @@
             if($rolConsultado == 0){
                 //Y lo redireccionamos
                 header("Status: 301 Moved Permanently");
-                header("Location:registrarUsuario.php");
-                echo"<script language='javascript'>window.location='registrarUsuario.php'</script>;";
+                header("Location:adminVerUsuarios.php");
+                echo"<script language='javascript'>window.location='adminVerUsuarios.php'</script>;";
                 exit();
                 
             }else{

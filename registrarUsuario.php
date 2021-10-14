@@ -16,6 +16,7 @@
 		$password = "000";
 		$password_encriptado = password_hash($password, PASSWORD_DEFAULT);
 		$tipoCuenta = intval($_POST['tipoCuenta']);
+        $activo = 1;
 		
 		//Verificar los repetidos (El correo tiene que se unico)
 
@@ -33,20 +34,21 @@
 		else{
 			
 			//Agregar el nuevo registro
-			$consulta = $conn->prepare('INSERT INTO usuario (nombre, apellidos, correo, password, rol)
-				VALUES (:nombre, :apellidos, :correo, :password, :rol)');
+			$consulta = $conn->prepare('INSERT INTO usuario (nombre, apellidos, correo, password, rol,activo)
+				VALUES (:nombre, :apellidos, :correo, :password, :rol, :activo)');
 
 			$consulta->bindParam(':nombre',$nombre);
 			$consulta->bindParam(':apellidos', $apellidos);
 			$consulta->bindParam(':correo',$correo);
 			$consulta->bindParam(':password', $password_encriptado);
-			$consulta->bindParam(':rol', $tipoCuenta);
+            $consulta->bindParam(':rol', $tipoCuenta);
+			$consulta->bindParam(':activo', $activo);
 
 			if ($consulta->execute()) {
      			//Y lo redireccionamos
 				header("Status: 301 Moved Permanently");
-				header("Location:registrarUsuario.php");
-				echo"<script language='javascript'>window.location='registrarUsuario.php'</script>;";
+				header("Location:adminVerUsuarios.php");
+				echo"<script language='javascript'>window.location='adminVerUsuarios.php'</script>;";
 				exit();
     		} 
 
@@ -81,14 +83,23 @@
         </div>
     </div>
 
-    <!--Barra de navegación-->
+        <!--Barra de navegación-->
     <div class="container-fluid bg-light text-dark">
         <div class="row justify-content-end">
+            <div class="col-6">
+                <strong>Usuario: </strong> <?php echo 'Administrador'; ?>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="col-2">
+                 <a class="text-decoration-none" href="adminVerUsuarios.php">
+                    Usuarios del sistema
+                </a> 
+            </div>
             <div class="col-3">
                 <div class="container-fluid text-white">
                     <div class="row justify-content-end ">
-                        <div class="col-8">
-                            <a style="text-decoration:none" href="cerrarSesion.php">Cerrar Sesión</a>            
+                        <div class="col-6">
+                            <a class="text-decoration-none" href="cerrarSesion.php">Cerrar Sesión</a>            
                         </div>
                     </div>
                 </div>
@@ -145,7 +156,7 @@
 
                                 <div class="mb-3">
 
-                                	<select name="tipoCuenta">
+                                	<select name="tipoCuenta" class="form-select">
        								    <option value="">Nivel del usuario</option>
        								    <option value="1">Nivel 1</option>
        								    <option value="2">Nivel 2</option>
