@@ -126,8 +126,7 @@
                             <th>Nombre</th>
                             <th>Correo electrónico</th>
                             <th><div align="center">Nivel</div></th>
-                            <th><div align="center">Modificar</div></th>
-                            <th><div align="center">Eliminar</div></th>
+                            <th><div align="center">Desactivar</div></th>
                             
                         </tr>
                     </thead>
@@ -152,15 +151,7 @@
                                     </div>
                                 </td>
 
-                                <td>
-                                    <form action="#" method="POST">
-                                        <div align="center">
-                                            <input type="submit" name="modificar" 
-                                            value="Modificar" class="btn btn-outline-primary btn-sm">
-                                        </div>
-                                    </form>
-                                </td>
-
+                               
                                 <!--Desactivar y activar usuarios-->
                                 <?php if($resultado['activo'] == 1){ ?>
                                     <td>

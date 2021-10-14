@@ -83,7 +83,7 @@
         </div>
     </div>
 
-        <!--Barra de navegación-->
+    <!--Barra de navegación-->
     <div class="container-fluid bg-light text-dark">
         <div class="row justify-content-end">
             <div class="col-6">
