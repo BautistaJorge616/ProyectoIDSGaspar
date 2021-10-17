@@ -25,15 +25,45 @@
         $nivelDelUsuario = $resultado['rol'];
     }
 
+    if($nivelDelUsuario == 1){
+        $consulta = $conn->prepare('SELECT * FROM archivo 
+        WHERE id_usuario=:id_usuario
+        ORDER BY fecha LIMIT 5'); 
+        $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+        $consulta->execute();
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);  
+
+    }
+
+    if($nivelDelUsuario == 2){
+        $consulta = $conn->prepare('SELECT * FROM archivo 
+        WHERE nivelArchivo = 1 OR id_usuario=:id_usuario
+        ORDER BY fecha LIMIT 5'); 
+        $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+        $consulta->execute();
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    if($nivelDelUsuario == 3){
+
+        $consulta = $conn->prepare('SELECT * FROM archivo 
+        WHERE nivelArchivo < 3 OR id_usuario=:id_usuario
+        ORDER BY fecha LIMIT 5'); 
+        $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+        $consulta->execute();
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        
+    }
+
     //Mostrar todos los documentos
 
-    $path = 'archivos/usuarios/'.$id;
+   //$path = 'archivos/usuarios/'.$id;
   
-    if(!file_exists($path)){
-         mkdir($path);
-    }
-    
-    $directorio = opendir($path);
+   //if(!file_exists($path)){
+   //     mkdir($path);
+   //}
+   //
+   //$directorio = opendir($path);
  
 ?>
 
@@ -108,6 +138,7 @@
                             <th>Extensión</th>
                             <th>Tamaño</th>
                             <th>Propietario</th>
+                            <th>Fecha de carga</th>
                             <th>Descargar</th>
                             <th>Analizar</th>
                             <th>Visualizar</th>
@@ -117,18 +148,19 @@
 
                     <tbody>
                         
-                        <?php while($archivo = readdir($directorio)){   ?>
+                        <?php foreach($resultados as $resultado){   ?>
                             <tr>
-                                <?php if(!is_dir($archivo)){ ?>
+                                <?php if(true){ ?>
                                     <td>
-                                        <?php $mostrar = explode(".", $archivo)[0];?>
-                                        <?php echo $mostrar; ?> 
+                                        <?php echo $resultado['nombreArchivo'];?>
                                     </td>
-                                    <td> <?= pathinfo($directorio.$archivo,PATHINFO_EXTENSION); ?> </td>
+                                    <td> 
+                                        <?php echo $resultado['extension']; ?>
+                                    </td>
 
                                     <td>
 
-                                        <?php $tamano = filesize($path.'/'.$archivo); ?>
+                                        <?php $tamano = $resultado['tamano']; ?>
                                         <?php if($tamano < 1048576){?>
                                         <?php   $tamano = $tamano / 1024;?>
                                         <?php   $tamano = round($tamano, PHP_ROUND_HALF_UP); ?>
@@ -146,30 +178,34 @@
                                     </td>
 
                                     <td>
-                                        Propietario
+                                        <?php $propietario;  ?>
+                                        
+                                    </td>
+
+                                    <td>
+                                        <?php echo $resultado['fecha'];?>
                                     </td>
 
 
                                     <!--Descargar-->
                                     <td>
-                                        <form action="descargar.php" method="POST" 
-                                        target="_blank">
-                                            <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                            <div align="center" >
-                                                <input type="submit" name="descargar" 
-                                                value="Descargar"  
-                                                class="btn btn-outline-primary btn-sm">
-                                            </div>
-                                        </form>
+                                        <div align="center">
+                                            <a href="<?php echo $resultado['ruta'];?>"
+                                                class="btn btn-outline-primary btn-sm"
+                                                role="button" download>
+                                                Descargar
+                                            </a>
+                                        </div>
                                     </td>
 
                                     
                                     <!--Ver si se puede visualizar-->
-                                    <?php $tipo = pathinfo($directorio.$archivo,PATHINFO_EXTENSION);?>
+                                    <?php $tipo = $resultado['extension'];?>
                                     <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
                                         <td>
                                             <form action="visualizar.php" method="POST" target="_blank">
-                                                <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
+                                                <input type="hidden" name="ruta" 
+                                                    value="<?php echo $resultado['ruta']; ?>">
                                                 <div align="center">
                                                     <input type="submit" name="ver" value="Visualizar" class="btn btn-outline-primary btn-sm">
                                                 </div>
