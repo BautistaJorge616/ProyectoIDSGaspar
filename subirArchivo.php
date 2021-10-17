@@ -29,7 +29,6 @@
     //Subir el archivo
     if(isset($_POST['enviar'])){
         $n_sesion = $_SESSION['user_id'];
-
         if($_FILES['archivo']['error'] > 0){
             $mensaje = "Error al cargar archivo :(";
             $estadoCarga = 0;
@@ -60,6 +59,30 @@
                     if($resultado){
                         $mensaje =  "Archivo guardado correctamente :)";
                         $estadoCarga = 1;
+
+                        //Guardar archivo en la base de datos
+
+                        //Crear una consulta de los datos
+                        $consulta = $conn->prepare('INSERT INTO archivo 
+                        (id_usuario, nombreArchivo, tamano, fecha, extension, nivelArchivo, ruta)
+                            VALUES 
+                            (:id_usuario, :nombreArchivo, :tamano, :fecha, :extension, :nivelArchivo, :ruta)');
+
+                        $nombreAr = explode(".",$nombre_archivo)[0];
+                        $extension = explode(".",$nombre_archivo)[1];
+                        $fecha = date('Y-m-d h:i:s', time());  
+
+                        $consulta->bindParam(":id_usuario",$n_sesion);
+                        $consulta->bindParam(":nombreArchivo", $nombreAr);
+                        $consulta->bindParam(":tamano", $_FILES['archivo']['size']);
+                        $consulta->bindParam(":fecha", $fecha);
+                        $consulta->bindParam(":extension", $extension);
+                        $consulta->bindParam(":nivelArchivo", $nivelDelUsuario);
+                        $consulta->bindParam(":ruta", $ruta_archivo);
+
+                        $consulta->execute();
+
+
                     }else{
                         $mensaje = "Error al guardar el archivo :(";
                         $estadoCarga = 0;
