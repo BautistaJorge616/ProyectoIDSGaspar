@@ -28,7 +28,7 @@
     if($nivelDelUsuario == 1){
         $consulta = $conn->prepare('SELECT * FROM archivo 
         WHERE id_usuario=:id_usuario
-        ORDER BY fecha LIMIT 5'); 
+        ORDER BY fecha DESC LIMIT 5'); 
         $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
         $consulta->execute();
         $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);  
@@ -37,8 +37,8 @@
 
     if($nivelDelUsuario == 2){
         $consulta = $conn->prepare('SELECT * FROM archivo 
-        WHERE nivelArchivo = 1 OR id_usuario=:id_usuario
-        ORDER BY fecha LIMIT 5'); 
+        WHERE id_usuario=:id_usuario OR nivelArchivo = 1
+        ORDER BY fecha DESC LIMIT 5'); 
         $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
         $consulta->execute();
         $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -48,7 +48,7 @@
 
         $consulta = $conn->prepare('SELECT * FROM archivo 
         WHERE nivelArchivo < 3 OR id_usuario=:id_usuario
-        ORDER BY fecha LIMIT 5'); 
+        ORDER BY fecha DESC LIMIT 5'); 
         $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
         $consulta->execute();
         $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -128,7 +128,7 @@
     <!--Archivos-->
     <div class="container-fluid">
     	<div class="row justify-content-center">
-    		<div class="col-10">
+    		<div class="col-11">
 
     			<table class="table table-bordered table-hover">
 
@@ -138,6 +138,7 @@
                             <th>Extensión</th>
                             <th>Tamaño</th>
                             <th>Propietario</th>
+                            <th>Nivel</th>
                             <th>Fecha de carga</th>
                             <th>Descargar</th>
                             <th>Analizar</th>
@@ -179,7 +180,21 @@
 
                                     <td>
                                         <?php $propietario;  ?>
+                                        <?php $consulta = $conn->prepare('SELECT correo FROM usuario 
+                                        WHERE id_usuario=:id_usuario'); ?>
+
+                                        <?php $consulta->bindParam(':id_usuario',$resultado['id_usuario']
+                                        ); ?>
+                                        <?php $consulta->execute(); ?>
+                                        <?php $res = $consulta->fetch(PDO::FETCH_ASSOC);?>
+                                        <?php echo $res['correo'];?>
                                         
+                                    </td>
+
+                                    <td>
+                                        <div align="center">
+                                            <?php echo $resultado['nivelArchivo']; ?>
+                                        </div>
                                     </td>
 
                                     <td>
