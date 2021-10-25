@@ -7,6 +7,10 @@
  	//Requerir la conexion
  	include 'ConexionDB/conexion.php'; 
 
+    //Requerir el lector de pdf
+    include "vendor/autoload.php";
+    
+
  	$ruta = $_POST['ruta'];
 	
 	$nombreArchivo = $_POST['nombre'];
@@ -172,7 +176,73 @@
     //##############################################################################################
 
     if($extensionArchivo == 'pdf'){
-        echo "Not Available";
+
+        //Caracteres y palabras
+        $parseador = new \Smalot\PdfParser\Parser();
+        $documentoPDF = $parseador->parseFile($ruta);
+        $contenidoPDF = $documentoPDF->getText();
+        $arrayPDF = str_split($contenidoPDF);
+
+        //Carcateres
+        $numeroCaracteres =  count($arrayPDF);
+
+        //Palabras y recurrencia
+        $pegado = implode($arrayPDF);
+        $limpia = eliminar_acentos($pegado);
+        $minusculas = mb_strtolower($limpia, 'UTF-8');
+        $arrayListo = str_split($minusculas);
+
+        //Palabras
+        $diccionario = array();
+        $temp = "";
+
+        $flag = false;
+        for ($i=0; $i < count($arrayListo); $i++) { 
+            if(in_array($arrayListo[$i], $letras)){
+                //echo $arrayListo[$i].' -> Agregado</br>';
+                $temp = $temp.$arrayListo[$i];
+                $flag = true;
+            }else{
+    
+                //Al menos contiene un caracter valido
+    
+                if($flag){
+                    //echo "Recolectado: ".$temp.'</br>';
+                    $flag = false;
+                    $numeroPalabras = $numeroPalabras + 1;
+                    //Agregamos la palbra 
+    
+                    //Primera vez
+                    if(!isset($diccionario[$temp])){
+                        $diccionario[$temp] = 1;
+                    }else{
+                        //Ya existe
+                        $diccionario[$temp] = $diccionario[$temp] + 1;
+                    }
+    
+                    $temp = "";
+    
+                }
+                //echo $arrayListo[$i].'NOP </br>';
+            }
+        }
+
+        //Palabra sobrante 
+        if(strlen($temp)>0){
+            //echo "Recolectado: ".$temp.'</br>';
+            //Agregamos la palbra 
+            $numeroPalabras = $numeroPalabras + 1;
+            //Primera vez
+            if(!isset($diccionario[$temp])){
+                $diccionario[$temp] = 1;
+            }else{
+                //Ya existe
+                $diccionario[$temp] = $diccionario[$temp] + 1;
+            }
+            $temp = "";
+        }
+
+        
     }
 
     //ANALIZAR DOCX
