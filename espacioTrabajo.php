@@ -187,6 +187,7 @@
                                         ); ?>
                                         <?php $consulta->execute(); ?>
                                         <?php $res = $consulta->fetch(PDO::FETCH_ASSOC);?>
+                                        <?php $propietario = $res['correo'];?>
                                         <?php echo $res['correo'];?>
                                         
                                     </td>
@@ -237,9 +238,25 @@
                                     <!--Ver si se puede analizar-->
                                     <?php if($tipo == 'pdf' or $tipo == 'docx' or $tipo == 'txt'){ ?>
                                         <td>
-                                            <form action="analisis.php" method="POST" target="_blank">
-                                                <input type="hidden" name="ruta" value="<?php echo $archivo; ?>">
-                                                <input type="hidden" name="propietario" value="<?php echo "Propietario"; ?>">
+                                            <form action="analisis.php" method="POST" 
+                                            target="_blank">
+
+                                                <input type="hidden" name="ruta" 
+                                                    value="<?php echo $resultado['ruta']; ?>"
+                                                >
+
+                                                <input type="hidden" name="extension" value="<?php echo 
+                                                    $resultado['extension']; ?>">
+
+                                                <input type="hidden" name="nombre" 
+                                                    value="<?php echo $resultado['nombreArchivo']?>"
+                                                > 
+
+                                                 <input type="hidden" name="propietario" 
+                                                    value="<?php echo $propietario;?>"
+                                                > 
+                                                    
+
                                                 <div align="center" >
                                                     <input type="submit" name="analizar" value="Analizar"  class="btn btn-outline-primary btn-sm">
                                                 </div>

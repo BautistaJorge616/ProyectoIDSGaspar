@@ -7,7 +7,7 @@
     include 'ConexionDB/conexion.php'; 
 
     $id = $_SESSION['user_id'];
-    $path = 'archivos/usuarios/'.$id.'/'.$_POST['ruta'];
+    $path = $_POST['ruta'];
 
     $extension = pathinfo($path,PATHINFO_EXTENSION);
 
