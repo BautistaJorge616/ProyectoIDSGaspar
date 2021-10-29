@@ -67,6 +67,19 @@
                                         placeholder="Nombre del archivo">
                                 </div>
 
+                                <div class="mb-3">
+
+                                    <select name="tipoArchivo" class="form-select">
+                                        <option value="">Tipo de archivo</option>
+                                        <option value="pdf">PDF</option>
+                                        <option value="docx">DOCX</option>
+                                        <option value="txt">TXT</option>   
+                                        <option value="otro">Otra extensión</option>   
+                                    </select>
+
+                                </div>
+
+                                
 
                                 <div class="d-grid gap-2">
                                     <input type="submit" value="Agregar Usuario" class="btn btn-primary">
