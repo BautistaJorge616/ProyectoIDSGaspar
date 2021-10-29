@@ -127,25 +127,22 @@
         </div>
     </div>
 
-    <!--Barra de navegación-->
+   <!--Barra de navegación-->
     <div class="container-fluid bg-light text-dark">
         <div class="row justify-content-end">
-            <div class="col-6">
+            <div class="col-4 ">
                 <strong>Usuario: </strong> <?php echo $nombreDelUsuario ?>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong>Nivel: </strong> <?php echo $nivelDelUsuario ?>
             </div>
-            <div class="col-2">
+            <div class="col-3 ">
+                 <a class="text-decoration-none" href="busquedaAvanzada.php" target="_blank">Búsqueda Avanzada</a> 
+            </div>
+            <div class="col-2 ">
                  <a class="text-decoration-none" href="espacioTrabajo.php">Espacio de trabajo</a> 
             </div>
-            <div class="col-3">
-                <div class="container-fluid text-white">
-                    <div class="row justify-content-end ">
-                        <div class="col-8">
-                            <a class="text-decoration-none" href="cerrarSesion.php">Cerrar Sesión</a>            
-                        </div>
-                    </div>
-                </div>
+            <div class="col-2">
+                <a class="text-decoration-none" href="cerrarSesion.php">Cerrar Sesión</a>            
            </div>
         </div>
     </div>
