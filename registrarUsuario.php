@@ -107,7 +107,7 @@
         </div>
     </div>
 
-     <!--Validación de errores al registrar un nuevo usuario-->
+    <!--Validación de errores al registrar un nuevo usuario-->
     <?php if ($validacion == 1){ ?>
 
         <!--Mensaje de error-->

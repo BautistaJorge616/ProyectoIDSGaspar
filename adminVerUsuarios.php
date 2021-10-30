@@ -12,7 +12,7 @@
 
         //Crear una consulta de los datos
         $consulta = $conn->prepare('SELECT id_usuario, nombre, apellidos, correo, rol, activo FROM usuario 
-            WHERE rol > :parametro');
+            WHERE rol > :parametro ORDER BY rol ASC');
         //Hacer la consulta con los datos que recibi
         $consulta->bindParam(':parametro',$parametro);
         //Ejecutamos la consulta 

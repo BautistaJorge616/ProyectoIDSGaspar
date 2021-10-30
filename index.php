@@ -122,7 +122,7 @@
     </div>
 
     <!--Fomulario para iniciar sesión-->
-    <div class="container-fluid my-3">
+    <div class="container-fluid my-1">
         <div class="row justify-content-center">
             <div class="col-6">
                 <div class="container-md my-1">
@@ -158,6 +158,18 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--Redirección a la página de auto-registro-->
+    <div class="container-fluid my-4">
+        <div class="row justify-content-center">
+            <div class="col-4" align="center">
+
+                <a href="autoRegistroUsuario.php">Regístrate</a>
+
             </div>
         </div>
     </div>
