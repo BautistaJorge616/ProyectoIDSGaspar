@@ -25,34 +25,144 @@
         $nivelDelUsuario = $resultado['rol'];
     }
 
-    if($nivelDelUsuario == 1){
-        $consulta = $conn->prepare('SELECT * FROM archivo 
-        WHERE id_usuario=:id_usuario
-        ORDER BY fecha DESC LIMIT 5'); 
-        $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
-        $consulta->execute();
-        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);  
+    //Archivos que se muestran
 
-    }
+    if(!empty($_POST['filtrar'])){
 
-    if($nivelDelUsuario == 2){
-        $consulta = $conn->prepare('SELECT * FROM archivo 
-        WHERE id_usuario=:id_usuario OR nivelArchivo = 1
-        ORDER BY fecha DESC LIMIT 5'); 
-        $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
-        $consulta->execute();
-        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
-    }
+        //Variables
 
-    if($nivelDelUsuario == 3){
+        $nombreBuscar = $_POST['nombreBuscar'];
+        $tipoBuscar = $_POST['tipoArchivo'];
 
-        $consulta = $conn->prepare('SELECT * FROM archivo 
-        WHERE nivelArchivo < 3 OR id_usuario=:id_usuario
-        ORDER BY fecha DESC LIMIT 5'); 
-        $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
-        $consulta->execute();
-        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
-        
+        if($nombreBuscar == "" && $tipoBuscar == ""){
+            //Y lo redireccionamos
+            header("Status: 301 Moved Permanently");
+            header("Location:espacioTrabajo.php");
+            echo"<script language='javascript'>window.location='espacioTrabajo.php'</script>;";
+            exit();
+        }
+
+        //Solo nombre
+
+        if($nombreBuscar != "" && $tipoBuscar == ""){
+
+            if($nivelDelUsuario == 1){
+                $consulta = $conn->prepare("SELECT * FROM archivo 
+                WHERE id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                ORDER BY fecha DESC"); 
+
+                $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                $consulta->execute();
+                $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);  
+
+            }
+
+        }
+
+        //Solo tipo 
+
+        if($nombreBuscar == "" && $tipoBuscar != ""){
+
+            if($nivelDelUsuario == 1){
+                
+                if($tipoBuscar == "todas"){
+
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario ORDER BY fecha DESC"); 
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                } else{
+
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario 
+                    AND extension = :tipoBuscar
+                    ORDER BY fecha DESC"); 
+                    $consulta->bindParam(":tipoBuscar",$tipoBuscar);  
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                } 
+
+            }
+
+        }
+
+        //Ambos
+
+        if($nombreBuscar != "" && $tipoBuscar != ""){
+
+            if($nivelDelUsuario == 1){
+                
+                if($tipoBuscar == "todas"){
+
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario 
+                    AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    ORDER BY fecha DESC"); 
+                    $consulta->bindParam(":nombreBuscar",$nombreBuscar); 
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                } else{
+
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario 
+                    AND extension = :tipoBuscar
+                    AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    ORDER BY fecha DESC"); 
+                    $consulta->bindParam(":nombreBuscar",$nombreBuscar); 
+                    $consulta->bindParam(":tipoBuscar",$tipoBuscar);  
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                } 
+
+            }            
+
+
+        }
+      
+
+    }else{
+
+        //Archivos por default
+
+        if($nivelDelUsuario == 1){
+            $consulta = $conn->prepare('SELECT * FROM archivo 
+            WHERE id_usuario=:id_usuario
+            ORDER BY fecha DESC LIMIT 5'); 
+            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);  
+
+        }
+
+        if($nivelDelUsuario == 2){
+            $consulta = $conn->prepare('SELECT * FROM archivo 
+            WHERE id_usuario=:id_usuario OR nivelArchivo = 1
+            ORDER BY fecha DESC LIMIT 5'); 
+            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        if($nivelDelUsuario == 3){
+
+            $consulta = $conn->prepare('SELECT * FROM archivo 
+            WHERE nivelArchivo < 3 OR id_usuario=:id_usuario
+            ORDER BY fecha DESC LIMIT 5'); 
+            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            
+        }
+
     }
 
  
@@ -101,6 +211,50 @@
                 <a class="text-decoration-none" href="cerrarSesion.php">Cerrar Sesión</a>            
            </div>
         </div>
+    </div>
+
+    <!--Búsqueda sencilla-->
+    <div class="container-fluid  my-3">
+
+        <div class="row justify-content-center">
+
+            <div class="col-10">
+                
+                <form action="espacioTrabajo.php" method="POST">
+                    <div class="row">
+
+                        <div class="col fs-5">
+                            Búsqueda sencilla
+                        </div>
+
+                        <div class="col">
+                            <select name="tipoArchivo" class="form-select form-select-sm">
+                                <option value="">Extensión del archivo</option>
+                                <option value="pdf">PDF</option>
+                                <option value="txt">TXT</option>
+                                <option value="docx">DOCX</option>   
+                                <option value="todas">TODAS</option>   
+                            </select>
+                        </div>
+
+                        <div class="col">
+                            <input class="form-control form-control-sm" type="text" 
+                            placeholder="Nombre del archivo" name="nombreBuscar">
+
+                        </div>
+
+                        <div class="col">
+                            <input type="submit" value="Buscar archivo" class="btn btn-primary  btn-sm"
+                                name="filtrar">
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
     </div>
 
     <!--Nombre de la página-->
