@@ -58,6 +58,30 @@
 
             }
 
+            if($nivelDelUsuario == 2){
+                $consulta = $conn->prepare("SELECT * FROM archivo 
+                WHERE id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                OR
+                nivelArchivo = 1 AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                ORDER BY fecha DESC"); 
+                $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                $consulta->execute();
+                $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);   
+            }
+
+            if($nivelDelUsuario == 3){
+                $consulta = $conn->prepare("SELECT * FROM archivo 
+                WHERE nivelArchivo < 3 AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                OR
+                id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                ORDER BY fecha DESC");
+                $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                $consulta->execute();
+                $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            }
+
         }
 
         //Solo tipo 
@@ -89,6 +113,59 @@
 
             }
 
+            if($nivelDelUsuario == 2){
+
+                if($tipoBuscar == "todas"){
+
+                    $consulta = $conn->prepare('SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario OR nivelArchivo = 1
+                    ORDER BY fecha DESC'); 
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                }else{
+
+                   $consulta = $conn->prepare('SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario AND extension = :tipoBuscar
+                    OR 
+                    nivelArchivo = 1 AND extension = :tipoBuscar
+                    ORDER BY fecha DESC'); 
+                    $consulta->bindParam(":tipoBuscar",$tipoBuscar);
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC); 
+
+                }
+
+            }
+
+            if($nivelDelUsuario == 3){
+
+                if($tipoBuscar == "todas"){
+
+                    $consulta = $conn->prepare('SELECT * FROM archivo 
+                    WHERE nivelArchivo < 3 OR id_usuario=:id_usuario
+                    ORDER BY fecha DESC'); 
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                }else{
+
+                    $consulta = $conn->prepare('SELECT * FROM archivo 
+                    WHERE nivelArchivo < 3 AND extension = :tipoBuscar
+                    OR
+                    id_usuario=:id_usuario AND extension = :tipoBuscar
+                    ORDER BY fecha DESC');
+                    $consulta->bindParam(":tipoBuscar",$tipoBuscar);   
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                }
+
+            }
         }
 
         //Ambos
@@ -123,7 +200,71 @@
 
                 } 
 
-            }            
+            }   
+
+            if($nivelDelUsuario == 2){
+
+                if($tipoBuscar == "todas"){
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    OR
+                    nivelArchivo = 1 AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    ORDER BY fecha DESC"); 
+                    $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC); 
+                }else{
+
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    AND extension = :tipoBuscar
+                    OR
+                    nivelArchivo = 1 AND nombreArchivo LIKE '%' :nombreBuscar '%' 
+                    AND extension = :tipoBuscar
+                    ORDER BY fecha DESC"); 
+                    $consulta->bindParam(":tipoBuscar",$tipoBuscar);  
+                    $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                }
+
+            }
+
+            if($nivelDelUsuario == 3){
+
+                if($tipoBuscar == "todas"){
+                    
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE nivelArchivo < 3 AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    OR
+                    id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    ORDER BY fecha DESC");
+                    $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                }else{
+
+                    $consulta = $conn->prepare("SELECT * FROM archivo 
+                    WHERE nivelArchivo < 3 AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    AND extension = :tipoBuscar
+                    OR
+                    id_usuario=:id_usuario AND nombreArchivo LIKE '%' :nombreBuscar '%'
+                    AND extension = :tipoBuscar
+                    ORDER BY fecha DESC");
+                    $consulta->bindParam(":tipoBuscar",$tipoBuscar);  
+                    $consulta->bindParam(":nombreBuscar",$nombreBuscar);  
+                    $consulta->bindParam(":id_usuario",$_SESSION['user_id']);  
+                    $consulta->execute();
+                    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                }
+
+            }         
 
 
         }
