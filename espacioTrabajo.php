@@ -34,6 +34,8 @@
         $nombreBuscar = $_POST['nombreBuscar'];
         $tipoBuscar = $_POST['tipoArchivo'];
 
+        //Ambos campos vacíos
+
         if($nombreBuscar == "" && $tipoBuscar == ""){
             //Y lo redireccionamos
             header("Status: 301 Moved Permanently");
@@ -272,7 +274,7 @@
 
     }else{
 
-        //Archivos por default
+        //Archivos por default limitado a 5 resultados en función de la fecha de carga más reciente
 
         if($nivelDelUsuario == 1){
             $consulta = $conn->prepare('SELECT * FROM archivo 
