@@ -7,6 +7,50 @@
     include 'ConexionDB/conexion.php';
 
 
+    //Inicio del análisis
+    if(!empty($_POST['analizar'])){
+        
+        //Obtener nivel del usuario
+        $consulta = $conn->prepare('SELECT * FROM usuario WHERE id_usuario = :id_usuario');
+        $consulta->bindParam(':id_usuario',$_SESSION['user_id']);
+        $consulta->execute();
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        $nivelDelUsuario = $resultado['rol'];
+
+        //Obtener archivos a los que tiene acceso
+        $archivos;
+
+        if($nivelDelUsuario == 1){
+            $consulta = $conn->prepare("SELECT * FROM archivo WHERE
+                                id_usuario=:id_usuario AND extension='pdf'
+                                OR
+                                id_usuario=:id_usuario AND extension='txt'
+                                OR
+                                id_usuario=:id_usuario AND extension='docx'");
+            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);   
+            $consulta->execute();
+            $archivos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+        }
+
+        if($nivelDelUsuario == 2){
+
+        }
+
+        if($nivelDelUsuario == 3){
+
+        }
+
+        //Analizar archivos recuperados
+        foreach($archivos as $archivo){
+            echo $archivo['nombreArchivo']." -- ".$archivo['extension']."</br>";
+        }
+        
+
+
+
+    }
 
    
 
@@ -36,11 +80,22 @@
         </div>
     </div>
 
+    <!--Mensaje de error de incio de sesión-->
+    <div class="container-fluid bg-warning text-white">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <h3>
+                    La búsqueda por contenido se aplicará a todos los archivos soportados (PDF, TXT y DOCX) a los que tiene acceso.
+                </h3>
+            </div>
+        </div>
+    </div>
+
     <!--Nombre de la página-->
     <div class="container-fluid my-4">
         <div class="row justify-content-center">
             <div class="col-8">
-                <h1 class="display-1" >Búsqueda de archivos</h1>
+                <h1 class="display-2" >Búsqueda por contenido</h1>
 
             </div>
         </div>
@@ -49,40 +104,26 @@
     <!--Fomulario para buscar un archvivo-->
     <div class="container-fluid my-2">
         <div class="row justify-content-center">
-            <div class="col-8">
+            <div class="col-6">
                 <div class="container-md my-3">
 
                     <div class="card text-dark bg-light">
                         <div class="card-header">
 
-                            <h4>Parametros de búsqueda</h4>
+                            <h4>Ingresa el texto a buscar</h4>
 
                         </div>
                         <div class="card-body">
 
-                            <form action="#" method="POST">
+                            <form action="busquedaAvanzada.php" method="POST">
 
                                 <div class="mb-3">
-                                    <input type="text" name="nombreArchivo" class="form-control"
-                                        placeholder="Nombre del archivo">
+                                    <input type="text" name="analizar" class="form-control"
+                                        placeholder="Contenido">
                                 </div>
-
-                                <div class="mb-3">
-
-                                    <select name="tipoArchivo" class="form-select">
-                                        <option value="">Tipo de archivo</option>
-                                        <option value="pdf">PDF</option>
-                                        <option value="docx">DOCX</option>
-                                        <option value="txt">TXT</option>   
-                                        <option value="otro">Otra extensión</option>   
-                                    </select>
-
-                                </div>
-
-                                
 
                                 <div class="d-grid gap-2">
-                                    <input type="submit" value="Agregar Usuario" class="btn btn-primary">
+                                    <input type="submit" value="Iniciar análisis" class="btn btn-primary">
                                 </div>
 
                             </form>
