@@ -35,10 +35,41 @@
         }
 
         if($nivelDelUsuario == 2){
-
+            $consulta = $conn->prepare("SELECT * FROM archivo WHERE
+                        id_usuario=:id_usuario AND extension='pdf'
+                        OR
+                        id_usuario=:id_usuario AND extension='txt'
+                        OR
+                        id_usuario=:id_usuario AND extension='docx'
+                        OR
+                        nivelArchivo=1 AND extension='pdf'
+                        OR
+                        nivelArchivo=1 AND extension='txt'
+                        OR
+                        nivelArchivo=1 AND extension='docx'
+                        ");
+            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);   
+            $consulta->execute();
+            $archivos = $consulta->fetchAll(PDO::FETCH_ASSOC);
         }
 
         if($nivelDelUsuario == 3){
+            $consulta = $conn->prepare("SELECT * FROM archivo WHERE
+                        id_usuario=:id_usuario AND extension='pdf'
+                        OR
+                        id_usuario=:id_usuario AND extension='txt'
+                        OR
+                        id_usuario=:id_usuario AND extension='docx'
+                        OR
+                        nivelArchivo < 3 AND extension='pdf'
+                        OR
+                        nivelArchivo < 3 AND extension='txt'
+                        OR
+                        nivelArchivo < 3 AND extension='docx'
+                        ");
+            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);   
+            $consulta->execute();
+            $archivos = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
         }
 
