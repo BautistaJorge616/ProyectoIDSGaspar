@@ -568,7 +568,8 @@
                             data-name="Caracteres: <?php echo $numeroCaracteres;?>">
                         </div>
 
-                        <div class="bar" style="--bar-value:<?php echo $barraPalabras;?>%;" 
+                        <div class="bar" style="--bar-color: #0dcaf0;
+                            --bar-value:<?php echo $barraPalabras;?>%;" 
                             data-name="Palabras: <?php echo $numeroPalabras;?>" >
                         </div>
 
@@ -576,7 +577,8 @@
                             data-name="Lineas: <?php echo $numeroLineas;?>">
                         </div>
 
-                        <div class="bar" style="--bar-value:<?php echo $barraParrafos;?>%;" 
+                        <div class="bar" style="--bar-color: #0dcaf0;
+                            --bar-value:<?php echo $barraParrafos;?>%;" 
                             data-name="Parrafos: <?php echo $numeroParrafos;?>">
                         </div>
             
