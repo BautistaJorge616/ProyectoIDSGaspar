@@ -268,6 +268,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
 
+    <style>
+        .chart-wrap {
+            --chart-width:420px;
+            --grid-color:#aaa;
+            --bar-color:#F16335;
+            --bar-thickness:40px;
+            --bar-rounded: 3px;
+            --bar-spacing:10px;
+     
+            font-family:sans-serif;
+            width:var(--chart-width);
+        }
+     
+        .chart-wrap .title{
+            font-weight:bold;
+            padding:1.8em 0;
+            text-align:center;
+            white-space:nowrap;
+        }
+     
+        /* cuando definimos el gráfico en horizontal, lo giramos 90 grados */
+        .chart-wrap.horizontal .grid{
+            transform:rotate(-90deg);
+        }
+     
+        .chart-wrap.horizontal .bar::after{
+            /* giramos las letras para horizontal*/
+            transform: rotate(45deg);
+            padding-top:0px;
+            display: block;
+        }
+     
+        .chart-wrap .grid{
+            margin-left:50px;
+            position:relative;
+            padding:5px 0 5px 0;
+            height:100%;
+            width:100%;
+            border-left:2px solid var(--grid-color);
+        }
+     
+        /* posicionamos el % del gráfico*/
+        .chart-wrap .grid::before{
+            font-size:0.8em;
+            font-weight:bold;
+            content:'0';
+            position:absolute;
+            left:-0.5em;
+            top:-1.5em;
+        }
+        .chart-wrap .grid::after{
+            font-size:0.8em;
+            font-weight:bold;
+            position:absolute;
+            right:-1.5em;
+            top:-1.5em;
+        }
+     
+        /* giramos las valores de 0% y 100% para horizontal */
+        .chart-wrap.horizontal .grid::before, .chart-wrap.horizontal .grid::after {
+            transform: rotate(90deg);
+        }
+     
+        .chart-wrap .bar {
+            width: var(--bar-value);
+            height:var(--bar-thickness);
+            margin:var(--bar-spacing) 0;
+            background-color:var(--bar-color);
+            border-radius:0 var(--bar-rounded) var(--bar-rounded) 0;
+        }
+     
+        .chart-wrap .bar:hover{
+            opacity:0.7;
+        }
+     
+        .chart-wrap .bar::after{
+            content:attr(data-name);
+            margin-left:100%;
+            padding:10px;
+            display:inline-block;
+            white-space:nowrap;
+        }
+ 
+    </style>
+
 </head>
 <body>
 
@@ -362,8 +447,8 @@
                     <thead>
                         <tr>
 
-                            <th>Palabras</th>
                             <th>Caracteres</th>
+                            <th>Palabras</th>
                             <th>Líneas</th>
                             <th>Parrafos</th>
                             
@@ -373,11 +458,11 @@
                     <tbody>
                         
                         <td>
-                        	<?php echo $numeroPalabras;?>
+                            <?php echo $numeroCaracteres;?>
                         </td>
                         
                         <td>
-                        	<?php echo $numeroCaracteres;?>
+                            <?php echo $numeroPalabras;?>
                         </td>
 
                         <td>
@@ -459,6 +544,52 @@
             </div>
         </div>
     </div>
+
+    <div class="container-fluid my-5">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                
+                <?php 
+
+                    $max = max(max($numeroCaracteres, $numeroPalabras), 
+                                max($numeroLineas,$numeroParrafos));
+
+                    $escala = 100 / $max;
+                    $barraCaracteres = $numeroCaracteres * $escala;
+                    $barraPalabras = $numeroPalabras * $escala;
+                    $barraLineas = $numeroLineas * $escala;
+                    $barraParrafos = $numeroParrafos * $escala;
+                ?>       
+                <div class="chart-wrap">
+
+                    <div class="grid">
+                        <div class="bar" 
+                            style="--bar-value:<?php echo  $barraCaracteres;?>%;" 
+                            data-name="Caracteres: <?php echo $numeroCaracteres;?>">
+                        </div>
+
+                        <div class="bar" style="--bar-value:<?php echo $barraPalabras;?>%;" 
+                            data-name="Palabras: <?php echo $numeroPalabras;?>" >
+                        </div>
+
+                        <div class="bar" style="--bar-value:<?php echo $barraLineas;?>%;" 
+                            data-name="Lineas: <?php echo $numeroLineas;?>">
+                        </div>
+
+                        <div class="bar" style="--bar-value:<?php echo $barraParrafos;?>%;" 
+                            data-name="Parrafos: <?php echo $numeroParrafos;?>">
+                        </div>
+            
+                    </div>
+
+                            
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
