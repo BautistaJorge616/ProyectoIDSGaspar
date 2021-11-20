@@ -7,83 +7,6 @@
     include 'ConexionDB/conexion.php';
 
 
-    //Inicio del análisis
-    if(!empty($_POST['analizar'])){
-        
-        //Obtener nivel del usuario
-        $consulta = $conn->prepare('SELECT * FROM usuario WHERE id_usuario = :id_usuario');
-        $consulta->bindParam(':id_usuario',$_SESSION['user_id']);
-        $consulta->execute();
-        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
-
-        $nivelDelUsuario = $resultado['rol'];
-
-        //Obtener archivos a los que tiene acceso
-        $archivos;
-
-        if($nivelDelUsuario == 1){
-            $consulta = $conn->prepare("SELECT * FROM archivo WHERE
-                                id_usuario=:id_usuario AND extension='pdf'
-                                OR
-                                id_usuario=:id_usuario AND extension='txt'
-                                OR
-                                id_usuario=:id_usuario AND extension='docx'");
-            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);   
-            $consulta->execute();
-            $archivos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
-        }
-
-        if($nivelDelUsuario == 2){
-            $consulta = $conn->prepare("SELECT * FROM archivo WHERE
-                        id_usuario=:id_usuario AND extension='pdf'
-                        OR
-                        id_usuario=:id_usuario AND extension='txt'
-                        OR
-                        id_usuario=:id_usuario AND extension='docx'
-                        OR
-                        nivelArchivo=1 AND extension='pdf'
-                        OR
-                        nivelArchivo=1 AND extension='txt'
-                        OR
-                        nivelArchivo=1 AND extension='docx'
-                        ");
-            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);   
-            $consulta->execute();
-            $archivos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        if($nivelDelUsuario == 3){
-            $consulta = $conn->prepare("SELECT * FROM archivo WHERE
-                        id_usuario=:id_usuario AND extension='pdf'
-                        OR
-                        id_usuario=:id_usuario AND extension='txt'
-                        OR
-                        id_usuario=:id_usuario AND extension='docx'
-                        OR
-                        nivelArchivo < 3 AND extension='pdf'
-                        OR
-                        nivelArchivo < 3 AND extension='txt'
-                        OR
-                        nivelArchivo < 3 AND extension='docx'
-                        ");
-            $consulta->bindParam(":id_usuario",$_SESSION['user_id']);   
-            $consulta->execute();
-            $archivos = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
-        }
-
-        //Analizar archivos recuperados
-        foreach($archivos as $archivo){
-            echo $archivo['nombreArchivo']." -- ".$archivo['extension']."</br>";
-        }
-        
-
-
-
-    }
-
-   
 
 ?>
 
@@ -146,7 +69,7 @@
                         </div>
                         <div class="card-body">
 
-                            <form action="busquedaAvanzada.php" method="POST">
+                            <form action="resultadoBusquedaAvanzada.php" method="POST">
 
                                 <div class="mb-3">
                                     <input type="text" name="analizar" class="form-control"
