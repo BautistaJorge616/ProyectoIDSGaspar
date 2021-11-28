@@ -7,7 +7,7 @@
  	//Requerir la conexion
  	include 'ConexionDB/conexion.php'; 
 
-    //Requerir el lector de pdf
+    //Requerir el lector de pdf y lector de docx
     include "vendor/autoload.php";
     
 
@@ -185,6 +185,9 @@
 
         //Carcateres
         $numeroCaracteres =  count($arrayPDF);
+        $numeroLineas = ceil($numeroCaracteres / 78);
+        $numeroParrafos = 1;
+
 
         //Palabras y recurrencia
         $pegado = implode($arrayPDF);
@@ -249,11 +252,192 @@
     //##############################################################################################
 
     if($extensionArchivo == 'docx'){
-        echo "Not Available";
+        $dir = str_replace('\\', '/', __DIR__) . '/';
+        $phpWord =\PhpOffice\PhpWord\IOFactory::load($ruta);
+
+        $arrayDocx = str_split(docx2html($ruta));
+        $numeroCaracteres = count($arrayDocx);
+
+        //Palabras y recurrencia
+        $pegado = implode($arrayDocx);
+        $limpia = eliminar_acentos($pegado);
+        $minusculas = mb_strtolower($limpia, 'UTF-8');
+        $arrayListo = str_split($minusculas);
+
+        //Contar lineas y parrafos
+        $vals = docxPL($ruta);
+
+        $numeroLineas = $vals['parrafos'];
+        $numeroParrafos = $vals['lineas'];
+
+
+        //Palabras
+        $diccionario = array();
+        $temp = "";
+
+        $flag = false;
+        for ($i=0; $i < count($arrayListo); $i++) { 
+            if(in_array($arrayListo[$i], $letras)){
+                //echo $arrayListo[$i].' -> Agregado</br>';
+                $temp = $temp.$arrayListo[$i];
+                $flag = true;
+            }else{
+    
+                //Al menos contiene un caracter valido
+    
+                if($flag){
+                    //echo "Recolectado: ".$temp.'</br>';
+                    $flag = false;
+                    $numeroPalabras = $numeroPalabras + 1;
+                    //Agregamos la palbra 
+    
+                    //Primera vez
+                    if(!isset($diccionario[$temp])){
+                        $diccionario[$temp] = 1;
+                    }else{
+                        //Ya existe
+                        $diccionario[$temp] = $diccionario[$temp] + 1;
+                    }
+    
+                    $temp = "";
+    
+                }
+                //echo $arrayListo[$i].'NOP </br>';
+            }
+        }
+
+        //Palabra sobrante 
+        if(strlen($temp)>0){
+            //echo "Recolectado: ".$temp.'</br>';
+            //Agregamos la palbra 
+            $numeroPalabras = $numeroPalabras + 1;
+            //Primera vez
+            if(!isset($diccionario[$temp])){
+                $diccionario[$temp] = 1;
+            }else{
+                //Ya existe
+                $diccionario[$temp] = $diccionario[$temp] + 1;
+            }
+            $temp = "";
+        }
+
     }
 
    
 
+?>
+
+<!--Extraer texto-->
+<?php
+
+    function docx2html($source){
+        $phpWord =\PhpOffice\PhpWord\IOFactory::load($source);
+        $html = '';
+        $rowContent = "";
+        foreach ($phpWord->getSections() as $section) {
+            foreach ($section->getElements() as $ele1) {
+                $paragraphStyle = $ele1->getParagraphStyle();
+                if ($paragraphStyle) {
+                    $html .= '<p style="text-align:'. $paragraphStyle->getAlignment() .';text-indent:20px;">';
+                } else {
+                    $html .= '<p>';
+                }
+                if ($ele1 instanceof\PhpOffice\PhpWord\Element\TextRun) {
+                    foreach ($ele1->getElements() as $ele2) {
+                        if ($ele2 instanceof\PhpOffice\PhpWord\Element\Text) {
+                            $style = $ele2->getFontStyle();
+                            $fontFamily = mb_convert_encoding($style->getName(), 'GBK', 'UTF-8');
+                            $fontSize = $style->getSize();
+                            $isBold = $style->isBold();
+                            $styleString = '';
+                            $fontFamily && $styleString .= "font-family:{$fontFamily};";
+                            $fontSize && $styleString .= "font-size:{$fontSize}px;";
+                            $isBold && $styleString .= "font-weight:bold;";
+                            $html .= sprintf('<span style="%s">%s</span>',
+                                $styleString,
+                                mb_convert_encoding($ele2->getText(), 'GBK', 'UTF-8')
+                            );
+
+                            $rowContent = $rowContent . " " .mb_convert_encoding($ele2->getText(), 'GBK', 'UTF-8');
+                            
+                        } elseif ($ele2 instanceof\PhpOffice\PhpWord\Element\Image) {
+                            $imageSrc = 'images/' . md5($ele2->getSource()) . '.' . $ele2->getImageExtension();
+                            $imageData = $ele2->getImageStringData(true);
+                            // $imageData = 'data:' . $ele2->getImageType() . ';base64,' . $imageData;
+                            file_put_contents($imageSrc, base64_decode($imageData));
+                            $html .= '<img src="'. $imageSrc .'" style="width:100%;height:auto">';
+                        }
+                    }
+                }
+                $html .= '</p>';
+            }
+        }
+        
+        return $rowContent;
+    }
+
+?>
+
+<!--Contar lineas y parrafos-->
+<?php
+
+    function docxPL($source){
+        $phpWord =\PhpOffice\PhpWord\IOFactory::load($source);
+        $html = '';
+        $rowContent = "";
+        $parrafos = 0;
+        $lineas = 0;
+        foreach ($phpWord->getSections() as $section) {
+            foreach ($section->getElements() as $ele1) {
+
+                $paragraphStyle = $ele1->getParagraphStyle();
+                if ($paragraphStyle) {
+                    $html .= '<p style="text-align:'. $paragraphStyle->getAlignment() .';text-indent:20px;">';
+                } else {
+                    $html .= '<p>';
+                   
+                }
+                if ($ele1 instanceof\PhpOffice\PhpWord\Element\TextRun) {
+                    foreach ($ele1->getElements() as $ele2) {
+                        if ($ele2 instanceof\PhpOffice\PhpWord\Element\Text) {
+                            $style = $ele2->getFontStyle();
+                            $fontFamily = mb_convert_encoding($style->getName(), 'GBK', 'UTF-8');
+                            $fontSize = $style->getSize();
+                            $isBold = $style->isBold();
+                            $styleString = '';
+                            $fontFamily && $styleString .= "font-family:{$fontFamily};";
+                            $fontSize && $styleString .= "font-size:{$fontSize}px;";
+                            $isBold && $styleString .= "font-weight:bold;";
+                            $html .= sprintf('<span style="%s">%s</span>',
+                                $styleString,
+                                mb_convert_encoding($ele2->getText(), 'GBK', 'UTF-8')
+                            );
+                            
+                            $lineas = $lineas + (count(str_split(mb_convert_encoding($ele2->getText(), 'GBK', 'UTF-8'))) / 78);
+                        } elseif ($ele2 instanceof\PhpOffice\PhpWord\Element\Image) {
+                            $imageSrc = 'images/' . md5($ele2->getSource()) . '.' . $ele2->getImageExtension();
+                            $imageData = $ele2->getImageStringData(true);
+                            // $imageData = 'data:' . $ele2->getImageType() . ';base64,' . $imageData;
+                            file_put_contents($imageSrc, base64_decode($imageData));
+                            $html .= '<img src="'. $imageSrc .'" style="width:100%;height:auto">';
+                        }
+                    }
+                }
+                $html .= '</p>';
+                $parrafos = $parrafos + 1;
+            }
+        }
+        
+        $lineas = ceil($lineas);
+
+        $valores = [
+            "parrafos" => $parrafos,
+            "lineas"   => $lineas
+        ];
+
+        return $valores;
+    }
+    
 ?>
 
 <!DOCTYPE html>
